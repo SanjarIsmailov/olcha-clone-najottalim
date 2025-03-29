@@ -13,10 +13,8 @@ A full-featured e-commerce web application that replicates the functionality of 
 
 ## Tech Stack
 - **Backend**: Django, Django REST Framework (DRF)
-- **Frontend**: React, Redux, TailwindCSS
 - **Database**: PostgreSQL
 - **Authentication**: Custom user model with phone number login
-- **Deployment**: Docker, Nginx, Gunicorn
 
 ## Installation
 ### Prerequisites
