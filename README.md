@@ -50,13 +50,6 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### Frontend Setup
-```sh
-cd frontend
-npm install
-npm run dev  # Runs the React frontend
-```
-
 ## Contribution Guidelines
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature-name`)
