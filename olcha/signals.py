@@ -1,7 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
-from django.core.exceptions import ValidationError
-from .models import Order, Basket, OrderItem, Product, Rate, Category
+
+from .models import Order, Basket, OrderItem, Product, Rate
+
 
 @receiver(post_save, sender=Order)
 def create_order_items(sender, instance, created, **kwargs):

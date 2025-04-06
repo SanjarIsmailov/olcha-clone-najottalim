@@ -40,6 +40,13 @@ INSTALLED_APPS = [
     'olcha',
     'rest_framework',  # Required for DRF
     'drf_yasg',        # Swagger
+    'django.contrib.sites',  # required for allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth.registration',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +57,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',  # ← important to keep this above
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -85,10 +95,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DATABASE_NAME"),
-        "USER": os.getenv("DATABASE_USER"),
+        "USER": 'postgres',
         "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-        "HOST": os.getenv("DATABASE_HOST"),
-        "PORT": os.getenv("DATABASE_PORT"),
+        "HOST": 'localhost',
+        "PORT": '5432',
     }
 }
 
@@ -144,3 +154,15 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '193318931787-kvpmeek904025fesklpb2vi53bhgc3pg.apps.googleusercontent.com.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        }
+    }
+}
+
+REST_USE_JWT = True
