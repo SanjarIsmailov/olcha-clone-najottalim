@@ -1,48 +1,43 @@
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from rest_framework import generics
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from .models import Category, Product, Rate, Comment, Basket, Order
+from .models import Category, Product, Rate, Basket, Order, Comment
 from .serializers import (
-    CategorySerializer, ProductSerializer, RateSerializer, CommentSerializer,
-    BasketSerializer, OrderSerializer, CreateOrderSerializer
+    CategorySerializer, ProductSerializer, RateSerializer, BasketSerializer, OrderSerializer, CreateOrderSerializer,
+    CommentSerializer
 )
 
 
-# ----- Pagination Class -----
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10  # Change this to whatever number you want per page
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
 
-# ----- Category Views -----
-@method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 minutes
 class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = StandardResultsSetPagination  # Add pagination
+    pagination_class = StandardResultsSetPagination
     filter_backends = (SearchFilter,)
-    search_fields = ('name',)  # Allow searching by 'name' field
+    search_fields = ('name',)
+    permission_classes = [AllowAny]
 
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
 
-# ----- Product Views -----
-@method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 minutes
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    pagination_class = StandardResultsSetPagination  # Add pagination
+    pagination_class = StandardResultsSetPagination
     filter_backends = (SearchFilter,)
-    search_fields = ('name',)  # Allow searching by 'name' field
+    search_fields = ('name',)
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         queryset = Product.objects.all()
-        # Sorting by price (ascending and descending)
         sort_by_price = self.request.query_params.get('sort_by_price', None)
         if sort_by_price == 'expensive':
             queryset = queryset.order_by('-price')
@@ -53,8 +48,8 @@ class ProductListCreateView(generics.ListCreateAPIView):
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
 
-# ----- Rate Views -----
 class RateListCreateView(generics.ListCreateAPIView):
     queryset = Rate.objects.all()
     serializer_class = RateSerializer
@@ -63,16 +58,6 @@ class RateListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# ----- Comment Views -----
-class CommentListCreateView(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-# ----- Basket Views -----
 class BasketListCreateView(generics.ListCreateAPIView):
     serializer_class = BasketSerializer
     permission_classes = [IsAuthenticated]
@@ -90,7 +75,6 @@ class BasketDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Basket.objects.filter(user=self.request.user)
 
-# ----- Order Views -----
 class CreateOrderView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = CreateOrderSerializer
@@ -109,3 +93,11 @@ class OrderDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+
+class CommentListCreateView(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
