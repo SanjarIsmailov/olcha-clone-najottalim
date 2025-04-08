@@ -1,16 +1,16 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import generics
+from rest_framework.filters import SearchFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.models import User
-from .models import Category, Product, Rate, Comment, Basket, Order, OrderItem
+
+from .models import Category, Product, Rate, Comment, Basket, Order
 from .serializers import (
     CategorySerializer, ProductSerializer, RateSerializer, CommentSerializer,
-    BasketSerializer, OrderSerializer, CreateOrderSerializer, OrderItemSerializer
+    BasketSerializer, OrderSerializer, CreateOrderSerializer
 )
-from rest_framework.pagination import PageNumberPagination
-from django.views.decorators.cache import cache_page
-from rest_framework.decorators import api_view
-from django.utils.decorators import method_decorator
-from rest_framework.filters import SearchFilter
+
 
 # ----- Pagination Class -----
 class StandardResultsSetPagination(PageNumberPagination):
