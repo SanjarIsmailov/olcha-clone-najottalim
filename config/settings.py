@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'allauth',  # Allauth for authentication and registration
     'allauth.account',  # Allauth for account management
     'allauth.socialaccount',  # Allauth social account integration (optional)
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -42,6 +43,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',  # Added AccountMiddleware
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -141,3 +143,19 @@ ACCOUNT_LOGOUT_ON_GET = True
 LOGIN_REDIRECT_URL = '/'  # Change this to the URL you want to redirect to after login
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_REQUIRED = True
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer 12345abcdef"',
+        },
+    },
+    'USE_SESSION_AUTH': False,
+}
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
