@@ -1,21 +1,20 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-# You can customize the User model here
+# Assuming you have a custom user model that inherits from AbstractBaseUser
+CustomUser = get_user_model()
+
+# Unregister the default User model from admin
+admin.site.unregister(CustomUser)
+
+# Register your custom user model with the custom UserAdmin
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
-    search_fields = ('username', 'email')
-    list_filter = ('is_staff', 'is_active')
-    ordering = ('username',)
+    model = CustomUser
+    list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff']
+    list_filter = ['is_staff', 'is_superuser', 'groups']
+    search_fields = ['username', 'email']
+    ordering = ['username']
 
-    # Fields for user creation and modification
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('phone_number',)}),  # Add custom fields here if needed
-    )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('phone_number',)}),  # Add custom fields here if needed
-    )
-
-# Register the custom User admin
-admin.site.register(User, CustomUserAdmin)
+# Register the custom user admin
+admin.site.register(CustomUser, CustomUserAdmin)

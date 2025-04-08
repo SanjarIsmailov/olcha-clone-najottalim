@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # Load environment variables
 load_dotenv()
@@ -20,10 +21,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'olcha',
+    'olcha',  # Your custom app
+    'users',
     'rest_framework',
-    'drf_yasg',
+    'drf_yasg',  # Swagger
     'rest_framework.authtoken',
+    'dj_rest_auth',  # Add dj-rest-auth for handling JWT login/logout
+    'dj_rest_auth.registration',  # Add registration functionality
+    'allauth',  # Allauth for authentication and registration
+    'allauth.account',  # Allauth for account management
+    'allauth.socialaccount',  # Allauth social account integration (optional)
 ]
 
 MIDDLEWARE = [
@@ -34,6 +41,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # Added AccountMiddleware
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -56,6 +64,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# Database settings
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -67,6 +76,7 @@ DATABASES = {
     }
 }
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -82,33 +92,52 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Localization settings
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# Static and media files settings
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-from datetime import timedelta
-
+# REST framework settings for JWT authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Use JWT authentication only
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
+# JWT settings for token expiration
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Access token lifetime
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Refresh token lifetime
+    'ROTATE_REFRESH_TOKENS': False,  # Disable refresh token rotation
+    'BLACKLIST_AFTER_ROTATION': False,  # Do not blacklist tokens after rotation
+    'AUTH_HEADER_TYPES': ('Bearer',),  # Use Bearer authorization header
 }
+
+# Allauth settings
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Default authentication backend
+    'allauth.account.auth_backends.AuthenticationBackend',  # Allauth authentication backend
+)
+
+# Allauth account settings
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+ACCOUNT_LOGIN_ON_SIGNUP = True
+ACCOUNT_LOGOUT_ON_GET = True
+
+# Set the login redirect URL after successful login
+LOGIN_REDIRECT_URL = '/'  # Change this to the URL you want to redirect to after login
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_REQUIRED = True
